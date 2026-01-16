@@ -41,5 +41,3 @@ const port = process.env.PORT || 7000; // fallback if .env fails
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
-
-export default app;
