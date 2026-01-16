@@ -1,7 +1,7 @@
-import "dotenv/config"; // this auto-loads .env variables
+import "dotenv/config";
 import express, { Request, Response } from "express";
 import cors from "cors";
-import connectDB from "./config/db.js";
+import connectDB from "../config/db.js"; // adjust path: now one level up
 import session from "express-session";
 
 declare module "express-session" {
@@ -17,7 +17,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:5000", "http://localhost:3000"],
+    origin: ["http://localhost:5000", "http://localhost:3000"], // update for prod later
     credentials: true,
   })
 );
@@ -36,5 +36,7 @@ app.use(express.json());
 app.get("/", (req: Request, res: Response) => {
   res.send("Server is Live!");
 });
+
+// Add your other routes here or import them
 
 export default app;
