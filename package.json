@@ -1,8 +1,7 @@
 {
-  "name": "server",
+  "name": "vercel-ts-server",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "main": "dist/server.js",
   "scripts": {
     "start": "tsx server.ts",
     "server": "nodemon --exec tsx server.ts",
