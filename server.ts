@@ -1,7 +1,6 @@
 import "dotenv/config"; // this auto-loads .env variables
 import express, { Request, Response } from "express";
 import cors from "cors";
-import "dotenv/config";
 import connectDB from "./config/db.js";
 import session from "express-session";
 
@@ -15,6 +14,7 @@ declare module "express-session" {
 await connectDB();
 
 const app = express();
+
 app.use(
   cors({
     origin: ["http://localhost:5000", "http://localhost:3000"],
@@ -37,7 +37,4 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Server is Live!");
 });
 
-const port = process.env.PORT || 7000; // fallback if .env fails
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+export default app;
