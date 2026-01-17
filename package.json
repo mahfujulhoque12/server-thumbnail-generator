@@ -1,16 +1,13 @@
 {
-  "name": "vercel-ts-server",
+  "name": "vercel-js-server",
   "version": "1.0.0",
-  "main": "dist/server.js",
-  "scripts": {
-    "start": "tsx server.js",
-    "server": "nodemon --exec tsx server.js",
-    "build": "js"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "private": true,
   "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
@@ -20,14 +17,6 @@
     "mongoose": "^9.1.4"
   },
   "devDependencies": {
-    "@types/bcrypt": "^6.0.0",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/express-session": "^1.18.2",
-    "@types/node": "^25.0.9",
-    "nodemon": "^3.1.11",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "nodemon": "^3.1.11"
   }
 }

@@ -10,6 +10,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["server.js", "config/**/*.js", "routes/**/*.js"],
+  "include": ["index.js", "config/**/*.js", "routes/**/*.js"],
   "exclude": ["node_modules"]
 }
