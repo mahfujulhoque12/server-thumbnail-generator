@@ -1,15 +1,14 @@
 import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
-import userRouter from "./routes/user.route.js";
-import authRouter from "./routes/auth.route.js";
-import listingRouter from "./routes/listing.route.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
+import authRoutes from "./routes/authRoutes.js";
 
 const corsConfig = {
   origin: "*",
-  credentials: true, // 🔥 allow cookies
+  credentials: true, // 
   methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
@@ -55,11 +54,7 @@ app.get("/health", (req, res) => {
 try {
   await connectDB();
   console.log("MongoDB connected");
-
-  // Add routes after DB connection
-  app.use("/api/user", userRouter);
-  app.use("/api", authRouter);
-  app.use("/api/listing", listingRouter);
+  app.use("/api/auth", authRoutes);
 } catch (error) {
   console.error("Failed to connect to MongoDB:", error);
   // Still start server but without DB routes
