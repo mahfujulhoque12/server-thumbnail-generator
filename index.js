@@ -4,14 +4,23 @@ import cors from "cors";
 import session from "express-session";
 import connectDB from "./config/db.js";
 
-await connectDB();
-
 const app = express();
+
+// IMPORTANT: connect DB only once
+let isConnected = false;
+async function dbConnectOnce() {
+  if (!isConnected) {
+    await connectDB();
+    isConnected = true;
+  }
+}
+
+await dbConnectOnce();
 
 /* ---------- Middleware ---------- */
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://localhost:5000"],
+    origin: ["http://localhost:3000"],
     credentials: true,
   }),
 );
@@ -24,19 +33,17 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
     },
   }),
 );
 
 /* ---------- Routes ---------- */
 app.get("/", (req, res) => {
-  res.send("Server is Live!");
+  res.send("Server is Live on Vercel!");
 });
 
-/* ---------- Server ---------- */
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+/* ---------- EXPORT (THIS IS THE KEY) ---------- */
+export default app;
