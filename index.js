@@ -1,49 +1,65 @@
-import "dotenv/config";
 import express from "express";
-import cors from "cors";
-import session from "express-session";
+import dotenv from "dotenv";
 import connectDB from "./config/db.js";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+
+const corsConfig = {
+  origin: "*",
+  credentials: true, // 🔥 allow cookies
+  methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+// Add global error handlers
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
+});
+
+dotenv.config();
 
 const app = express();
 
-// IMPORTANT: connect DB only once
-let isConnected = false;
-async function dbConnectOnce() {
-  if (!isConnected) {
-    await connectDB();
-    isConnected = true;
-  }
-}
+// ✅ CORS middleware - apply it globally
+app.use(cors(corsConfig));
 
-await dbConnectOnce();
+// ✅ Handle preflight OPTIONS requests for all routes
+app.options("*", cors(corsConfig));
 
-/* ---------- Middleware ---------- */
-app.use(
-  cors({
-    origin: ["http://localhost:3000"],
-    credentials: true,
-  }),
-);
+// Middleware
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+app.use(cookieParser());
 
-app.use(express.json());
-
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-    },
-  }),
-);
-
-/* ---------- Routes ---------- */
+// Simple test route first
 app.get("/", (req, res) => {
-  res.send("Server is Live on Vercel!");
+  res.json({ message: "Server is running!" });
 });
 
-/* ---------- EXPORT (THIS IS THE KEY) ---------- */
-export default app;
+// Connect DB and then add routes
+try {
+  await connectDB();
+  console.log("MongoDB connected");
+} catch (error) {
+  console.error("Failed to connect to MongoDB:", error);
+  // Still start server but without DB routes
+  app.use("/api/*", (req, res) => {
+    res.status(503).json({ error: "Database connection failed" });
+  });
+}
+
+// Error handler
+app.use((err, req, res, next) => {
+  console.error("Error:", err);
+  res.status(500).json({
+    error: "Internal server error",
+    message: err.message,
+  });
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
