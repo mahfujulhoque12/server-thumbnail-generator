@@ -1,4 +1,6 @@
+import "dotenv/config";
 import express from "express";
+import connectDB from "./config/db.js";
 
 const app = express();
 
@@ -10,9 +12,17 @@ app.get("/", (req, res) => {
   res.send("🚀 Server is running!");
 });
 
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "OK" });
-});
+// Connect DB and then add routes
+try {
+  await connectDB();
+  console.log("MongoDB connected");
+} catch (error) {
+  console.error("Failed to connect to MongoDB:", error);
+  // Still start server but without DB routes
+  app.use("/api/*", (req, res) => {
+    res.status(503).json({ error: "Database connection failed" });
+  });
+}
 
 // Server
 const PORT = 5000;
